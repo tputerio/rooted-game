@@ -1,11 +1,11 @@
 /* General body styling */
 body {
-    background-color: #f9f9f9; /* A very light, off-white background */
-    font-family: 'Inter', sans-serif; /* Use the Inter font */
-    color: #333; /* Dark grey for text for good contrast */
+    background-color: #f9f9f9;
+    font-family: 'Inter', sans-serif;
+    color: #333;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Align to the top */
+    align-items: flex-start;
     margin: 0;
     padding: 20px;
     min-height: 100vh;
@@ -14,7 +14,7 @@ body {
 /* Main container for the game */
 .game-container {
     width: 100%;
-    max-width: 600px; /* Set a max width for larger screens */
+    max-width: 600px;
     text-align: center;
 }
 
@@ -32,7 +32,7 @@ header h1 {
 .section-title {
     font-size: 16px;
     font-weight: 400;
-    color: #888; /* Lighter grey for titles */
+    color: #888;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 10px;
@@ -42,7 +42,7 @@ header h1 {
 .letter-grid {
     display: flex;
     justify-content: center;
-    gap: 10px; /* Space between squares */
+    gap: 10px;
 }
 
 /* Individual letter squares */
@@ -50,7 +50,7 @@ header h1 {
     width: 50px;
     height: 50px;
     border: 2px solid #ddd;
-    border-radius: 8px; /* Rounded corners */
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -59,13 +59,13 @@ header h1 {
     text-transform: uppercase;
 }
 
-/* Styling for the input area */
+/* Styling for the input area - REMOVED BUTTON */
 #input-area {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 15px;
-    height: 60px; /* Give it a fixed height */
+    height: 60px;
 }
 
 /* New text display styles */
@@ -87,6 +87,14 @@ header h1 {
     letter-spacing: 2px;
     text-transform: uppercase;
 }
+/* Style for individual letters in the input */
+#typed-text-display span.valid-letter {
+    color: #333; /* Black for valid letters */
+}
+#typed-text-display span.invalid-letter {
+    color: #ccc; /* Grey for invalid letters */
+}
+
 
 #cursor {
     display: inline-block;
@@ -111,41 +119,23 @@ header h1 {
     opacity: 0;
 }
 
-
-#submit-button {
-    padding: 12px 20px;
-    font-size: 18px;
-    font-weight: 700;
-    margin-left: 10px;
-    border: none;
-    background-color: #3498db; /* A nice blue color */
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#submit-button:hover {
-    background-color: #2980b9; /* Darker blue on hover */
-}
-
-/* Area for showing messages like "Word not found" */
+/* Area for showing messages */
 #message-area {
     height: 20px;
     margin-bottom: 20px;
-    color: #e74c3c; /* Red for errors */
+    color: #e74c3c;
     font-weight: 700;
 }
 
-/* Container for progress bars and found words list */
-#results-area {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+/* Progress Section Styling */
+.progress-entry {
+    margin-bottom: 15px;
 }
 
-/* Progress bar styling */
 .progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
@@ -153,40 +143,60 @@ header h1 {
     font-size: 14px;
     text-align: left;
     margin-bottom: 4px;
+    flex-shrink: 0; /* Prevents the label from shrinking */
+    width: 120px; /* Give it a fixed width */
 }
 
 .progress-bar-background {
-    width: 100%;
-    height: 20px;
+    flex-grow: 1; /* Allows the bar to take remaining space */
+    height: 24px;
     background-color: #eee;
-    border-radius: 10px;
-    overflow: hidden; /* Ensures the inner bar has rounded corners */
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .progress-bar-inner {
     height: 100%;
-    width: 0%; /* Start at 0% width */
-    background-color: #2ecc71; /* Green for progress */
-    border-radius: 10px;
-    transition: width 0.5s ease-in-out; /* Smooth animation */
+    width: 0%;
+    background-color: #2ecc71;
+    border-radius: 12px;
+    transition: width 0.5s ease-in-out;
     text-align: right;
     color: white;
     font-size: 12px;
-    line-height: 20px;
-    padding-right: 5px;
+    line-height: 24px;
+    padding-right: 8px;
+    box-sizing: border-box;
 }
 
-/* Found words list styling */
-#found-words-list {
+/* Celebration Animation Styling */
+.celebration-emoji {
+    font-size: 20px;
+    opacity: 0;
+}
+.celebration-emoji.celebrate {
+    animation: sparkle 0.7s ease-out;
+}
+@keyframes sparkle {
+    0% { transform: scale(0) rotate(0deg); opacity: 0; }
+    50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+    100% { transform: scale(0) rotate(360deg); opacity: 0; }
+}
+
+/* Found words list styling - NEW */
+.found-words-for-length {
     list-style: none;
-    padding: 0;
+    padding: 0 0 0 20px;
     margin: 0;
-    column-count: 3; /* Arrange words in columns */
-    column-gap: 20px;
-}
-
-#found-words-list li {
-    padding: 4px 0;
-    font-size: 16px;
+    display: flex;
+    flex-wrap: wrap; /* Allows words to wrap to the next line */
+    gap: 15px; /* Space between words */
+    justify-content: flex-start; /* Align words to the left */
     text-align: left;
+}
+.found-words-for-length li {
+    background-color: #e9e9e9;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 14px;
 }

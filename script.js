@@ -1,4 +1,3 @@
-// This function runs when the entire page is loaded
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- PUZZLE DATA ---
@@ -6,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             root: "GRAPH",
             extras: "SICOLE",
-            // The complete list of valid answers for this puzzle - must be uppercase
             solutions: ["GRAPHS", "GRAPHIC", "HOLOGRAPH", "GRAPHICS", "GRAPHICAL", "CHOREOGRAPH"]
         },
         {
@@ -23,20 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
             extras: "ASIDUE",
             solutions: ["SPORTE", "DUPORT", "AIRPOT", "PASSPORT", "RAPPORT", "DEPORT", "IMPORT", "EXPORT", "REPORT", "SUPPORT"]
         }
-        // You can add more puzzle objects here!
     ];
 
     // --- GETTING HTML ELEMENTS ---
     const rootWordDisplay = document.getElementById('root-word-display');
     const extraLettersDisplay = document.getElementById('extra-letters-display');
-    const hiddenWordInput = document.getElementById('hidden-word-input'); // The real (hidden) input
-    const textDisplayContainer = document.getElementById('text-display-container'); // The fake input container
-    const typedTextDisplay = document.getElementById('typed-text-display'); // The span that shows the typed text
-    const submitButton = document.getElementById('submit-button');
+    const hiddenWordInput = document.getElementById('hidden-word-input');
+    const textDisplayContainer = document.getElementById('text-display-container');
+    const typedTextDisplay = document.getElementById('typed-text-display');
     const messageArea = document.getElementById('message-area');
     const progressSection = document.getElementById('progress-section');
-    const foundWordsList = document.getElementById('found-words-list');
-    const foundWordsCountSpan = document.getElementById('found-words-count');
 
     let currentPuzzle;
     let allowedLetters;
@@ -46,10 +40,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function initGame() {
         const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
         currentPuzzle = puzzles[dayOfYear % puzzles.length];
-        allowedLetters = new Set((currentPuzzle.root + currentPuzzle.extras).split(''));
+        allowedLetters = new Set((currentPuzzle.root + currentPuzzle.extras).toUpperCase().split(''));
         displayPuzzle();
         setupProgressBars();
-        // Focus the hidden input by default
         hiddenWordInput.focus();
     }
 
@@ -80,37 +73,41 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPuzzle.solutions.forEach(word => {
             const len = word.length;
             if (!wordLengths[len]) {
-                wordLengths[len] = { total: 0, found: 0 };
+                wordLengths[len] = { total: 0 };
             }
             wordLengths[len].total++;
         });
 
         Object.keys(wordLengths).sort((a,b) => a-b).forEach(len => {
             const total = wordLengths[len].total;
-            const container = document.createElement('div');
-            container.className = 'progress-bar-container';
-            container.innerHTML = `
-                <div class="progress-label">${len}-Letter Words</div>
-                <div class="progress-bar-background">
-                    <div class="progress-bar-inner" id="progress-${len}" data-found="0" data-total="${total}">0/${total}</div>
+            const entry = document.createElement('div');
+            entry.className = 'progress-entry';
+            entry.innerHTML = `
+                <div class="progress-bar-container">
+                    <div class="progress-label">${len}-Letter Words</div>
+                    <div class="progress-bar-background">
+                        <div class="progress-bar-inner" id="progress-${len}" data-found="0" data-total="${total}">0/${total}</div>
+                    </div>
+                    <span class="celebration-emoji" id="celebrate-${len}">✨</span>
                 </div>
+                <ul class="found-words-for-length" id="found-words-${len}"></ul>
             `;
-            progressSection.appendChild(container);
+            progressSection.appendChild(entry);
         });
     }
 
     // --- GAME LOGIC ---
     function handleSubmit() {
-        // Get the value from the hidden input field
         const word = hiddenWordInput.value.toUpperCase();
         
         displayMessage('');
-        // Clear both the hidden input and the visual display
         hiddenWordInput.value = '';
-        typedTextDisplay.textContent = '';
+        typedTextDisplay.innerHTML = ''; // Clear visual display
 
-
-        // --- Validation Checks ---
+        if (!validateAllLettersUsedAreAllowed(word)) {
+             displayMessage("Word contains invalid letters.");
+             return;
+        }
         if (word.length < 5) {
             displayMessage("Word must be at least 5 letters long.");
             return;
@@ -119,58 +116,90 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage("Already found!");
             return;
         }
-        
-        // **BUG FIX**: Check the uppercase word against the solutions array.
-        // The .includes() method is case-sensitive, so we ensure both are uppercase.
         if (!currentPuzzle.solutions.includes(word)) {
             displayMessage("Not in the word list.");
             return;
         }
 
-        // If all checks pass, it's a valid word!
         foundWords.push(word);
         
+        // Add word to the specific list for its length
+        const wordList = document.getElementById(`found-words-${word.length}`);
         const listItem = document.createElement('li');
         listItem.textContent = word;
-        foundWordsList.appendChild(listItem);
+        wordList.appendChild(listItem);
         
-        const sortedItems = Array.from(foundWordsList.getElementsByTagName('li')).sort((a, b) => a.textContent.localeCompare(b.textContent));
-        sortedItems.forEach(item => foundWordsList.appendChild(item));
-        
-        foundWordsCountSpan.textContent = foundWords.length;
         updateProgressBar(word.length);
     }
     
+    // --- HELPER & UPDATE FUNCTIONS ---
     function updateProgressBar(len) {
         const progressBar = document.getElementById(`progress-${len}`);
-        if (progressBar) { // Make sure the progress bar exists
+        if (progressBar) {
             let found = parseInt(progressBar.dataset.found) + 1;
             const total = parseInt(progressBar.dataset.total);
             
             progressBar.dataset.found = found;
             progressBar.style.width = `${(found / total) * 100}%`;
             progressBar.textContent = `${found}/${total}`;
+
+            // Check for celebration
+            if (found === total) {
+                triggerCelebration(len);
+            }
         }
+    }
+
+    function triggerCelebration(len) {
+        const emoji = document.getElementById(`celebrate-${len}`);
+        emoji.classList.add('celebrate');
+        // Remove class after animation so it can be re-triggered
+        setTimeout(() => {
+            emoji.classList.remove('celebrate');
+        }, 700);
     }
 
     function displayMessage(msg) {
         messageArea.textContent = msg;
+        // Message disappears after 2 seconds
+        setTimeout(() => {
+            messageArea.textContent = '';
+        }, 2000);
+    }
+
+    function handleInputStyling() {
+        const currentText = hiddenWordInput.value.toUpperCase();
+        typedTextDisplay.innerHTML = ''; // Clear previous letters
+
+        for (const letter of currentText) {
+            const span = document.createElement('span');
+            span.textContent = letter;
+            // Check if the letter is allowed
+            if (allowedLetters.has(letter)) {
+                span.className = 'valid-letter';
+            } else {
+                span.className = 'invalid-letter';
+            }
+            typedTextDisplay.appendChild(span);
+        }
+    }
+
+    function validateAllLettersUsedAreAllowed(word) {
+        for(const letter of word) {
+            if(!allowedLetters.has(letter)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     // --- EVENT LISTENERS ---
-    submitButton.addEventListener('click', handleSubmit);
-
-    // Make it so clicking the display area focuses the hidden input
     textDisplayContainer.addEventListener('click', () => {
         hiddenWordInput.focus();
     });
 
-    // Sync the hidden input's value with the visual display
-    hiddenWordInput.addEventListener('input', () => {
-        typedTextDisplay.textContent = hiddenWordInput.value.toUpperCase();
-    });
+    hiddenWordInput.addEventListener('input', handleInputStyling);
     
-    // Listen for the "Enter" key on the whole page, which is better for accessibility
     document.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
             handleSubmit();
