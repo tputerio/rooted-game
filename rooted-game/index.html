@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooted</title>
+    <!-- Link to our CSS file for styling -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Load the Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="game-container">
+        <header>
+            <h1>Rooted</h1>
+        </header>
+
+        <!-- The main puzzle area -->
+        <main id="puzzle-area">
+            <div class="puzzle-section">
+                <h2 class="section-title">Root Word</h2>
+                <div id="root-word-display" class="letter-grid">
+                    <!-- Root word letters will be generated here by JavaScript -->
+                </div>
+            </div>
+
+            <div class="puzzle-section">
+                <h2 class="section-title">Extra Letters</h2>
+                <div id="extra-letters-display" class="letter-grid">
+                    <!-- Extra letters will be generated here by JavaScript -->
+                </div>
+            </div>
+        </main>
+
+        <!-- The area for user input -->
+        <div id="input-area">
+            <input type="text" id="word-input" placeholder="Type a word..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <button id="submit-button">Enter</button>
+        </div>
+        
+        <!-- A message area for feedback -->
+        <div id="message-area"></div>
+
+        <!-- The progress and found words sections -->
+        <div id="results-area">
+            <div id="progress-container">
+                <h2 class="section-title">Progress</h2>
+                <div id="progress-section">
+                    <!-- Progress bars will be generated here by JavaScript -->
+                </div>
+            </div>
+            <div id="found-words-container">
+                <h2 class="section-title">Found Words (<span id="found-words-count">0</span>)</h2>
+                <ul id="found-words-list">
+                    <!-- Found words will be added here by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link to our JavaScript file for game logic -->
+    <script src="script.js"></script>
+
+</body>
+</html>
