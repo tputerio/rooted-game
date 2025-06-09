@@ -16,22 +16,95 @@ body {
     width: 100%;
     max-width: 600px;
     text-align: center;
+    position: relative; /* Needed for positioning the button */
 }
 
-/* NEW HEADER STYLING */
+/* NEW TOP BAR for How to Play button */
+.top-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+#how-to-play-button {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s;
+}
+#how-to-play-button:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+}
+
+
+/* MODAL STYLES */
+.modal-overlay {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modal-overlay.hidden {
+    display: none;
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    text-align: left;
+}
+.modal-content h2 {
+    margin-top: 0;
+    text-align: center;
+}
+.modal-content ul {
+    padding-left: 20px;
+}
+.modal-content li {
+    margin-bottom: 10px;
+}
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+
+/* Header styling */
 header {
     margin-bottom: 30px;
+    padding-top: 20px; /* Make space for button */
 }
 .title-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 .tree-icon {
-    width: 32px;
-    height: 32px;
-    fill: #2ecc71; /* Green color for the icon */
+    width: 28px; /* Making it smaller */
+    height: 28px;
+    fill: #333;
 }
 header h1 {
     font-size: 36px;
@@ -44,12 +117,10 @@ header h1 {
     margin: 5px 0 0 0;
 }
 
-
-/* Styling for sections like Root Word, Extra Letters */
+/* Puzzle section styling */
 .puzzle-section {
     margin-bottom: 25px;
 }
-
 .section-title {
     font-size: 14px;
     font-weight: 400;
@@ -58,15 +129,11 @@ header h1 {
     letter-spacing: 1px;
     margin-bottom: 10px;
 }
-
-/* The grid that holds the letter squares */
 .letter-grid {
     display: flex;
     justify-content: center;
     gap: 10px;
 }
-
-/* Individual letter squares */
 .letter-square {
     width: 50px;
     height: 50px;
@@ -82,7 +149,7 @@ header h1 {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Styling for the input area */
+/* Input area styling */
 #input-area {
     display: flex;
     justify-content: center;
@@ -90,7 +157,6 @@ header h1 {
     margin-bottom: 15px;
     height: 60px;
 }
-
 #text-display-container {
     display: flex;
     align-items: center;
@@ -125,7 +191,7 @@ header h1 {
     opacity: 0;
 }
 
-/* Area for showing messages */
+/* Message area styling */
 #message-area {
     height: 20px;
     margin-bottom: 20px;
@@ -133,7 +199,7 @@ header h1 {
     font-weight: 700;
 }
 
-/* NEW RESULTS CONTAINER STYLING */
+/* Results container styling */
 #results-container {
     border: 1px solid #e0e0e0;
     border-radius: 12px;
@@ -158,26 +224,20 @@ header h1 {
     font-weight: 700;
 }
 
-
-/* Progress Section Styling */
-.progress-entry {
-    margin-bottom: 15px;
-}
-
+/* Progress section styling */
+.progress-entry { margin-bottom: 15px; }
 .progress-bar-container {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 8px;
 }
-
 .progress-label {
     font-size: 14px;
     text-align: left;
     flex-shrink: 0;
     width: 120px;
 }
-
 .progress-bar-background {
     flex-grow: 1;
     height: 24px;
@@ -185,7 +245,6 @@ header h1 {
     border-radius: 12px;
     overflow: hidden;
 }
-
 .progress-bar-inner {
     height: 100%;
     width: 0%;
@@ -199,22 +258,18 @@ header h1 {
     padding-right: 8px;
     box-sizing: border-box;
 }
-
-/* Celebration Animation Styling */
 .celebration-emoji {
     font-size: 20px;
     opacity: 0;
 }
-.celebration-emoji.celebrate {
-    animation: sparkle 0.7s ease-out;
-}
+.celebration-emoji.celebrate { animation: sparkle 0.7s ease-out; }
 @keyframes sparkle {
     0% { transform: scale(0) rotate(0deg); opacity: 0; }
     50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
     100% { transform: scale(0) rotate(360deg); opacity: 0; }
 }
 
-/* Found words list styling - REFINED */
+/* Found words styling */
 .found-words-for-length {
     list-style: none;
     padding: 5px 0 0 0;
@@ -228,7 +283,7 @@ header h1 {
 .found-words-for-length li {
     background-color: #f0f0f0;
     padding: 4px 12px;
-    border-radius: 16px; /* Pill shape */
+    border-radius: 16px;
     font-size: 14px;
     font-weight: 500;
 }

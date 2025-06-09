@@ -4,39 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooted</title>
-    <!-- Link to our CSS file for styling -->
     <link rel="stylesheet" href="style.css">
-    <!-- Load the Inter font from Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+    <!-- This is the "How to Play" modal, hidden by default -->
+    <div id="how-to-play-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-modal-button" class="close-button">&times;</button>
+            <h2>How to Play Rooted</h2>
+            <p>Find as many words as you can that meet the following rules:</p>
+            <ul>
+                <li>Words must contain the day's **Root Word**.</li>
+                <li>Words must be 5 letters or longer.</li>
+                <li>Words can only use letters from the Root Word and the Extra Letters provided.</li>
+                <li>Letters can be reused.</li>
+            </ul>
+            <p>Good luck!</p>
+        </div>
+    </div>
+
     <div class="game-container">
+        <!-- New top bar with How to Play button -->
+        <div class="top-bar">
+            <button id="how-to-play-button">How to Play</button>
+        </div>
+        
         <header>
-            <!-- New header with icon -->
             <div class="title-container">
-                <svg class="tree-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35zM7.5 5C5.52 5 4 6.52 4 8.5c0 2.72 2.67 5.2 7 8.88l1 1 1-1c4.33-3.68 7-6.16 7-8.88C20 6.52 18.48 5 16.5 5c-1.41 0-2.73.65-3.53 1.71L12 8.29l-.97-1.58C10.23 5.65 8.91 5 7.5 5z"/></svg>
+                <!-- The SVG icon has been removed -->
                 <h1>Rooted</h1>
             </div>
             <p class="subtitle">Find all of the words using the letters from the root word.</p>
         </header>
 
-        <!-- The main puzzle area -->
         <main id="puzzle-area">
             <div class="puzzle-section">
                 <h2 class="section-title">Root Word</h2>
                 <div id="root-word-display" class="letter-grid"></div>
             </div>
-
             <div class="puzzle-section">
                 <h2 class="section-title">Extra Letters</h2>
                 <div id="extra-letters-display" class="letter-grid"></div>
             </div>
         </main>
 
-        <!-- The area for user input -->
         <div id="input-area">
             <div id="text-display-container" tabindex="0">
                 <span id="typed-text-display"></span>
@@ -45,22 +60,17 @@
             <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         
-        <!-- A message area for feedback -->
         <div id="message-area"></div>
 
-        <!-- The progress and found words sections - NEW BOXED LAYOUT -->
         <div id="results-container">
             <div class="results-header">
                 <h2>Found Words</h2>
                 <span id="found-words-summary">0 of 0</span>
             </div>
-            <div id="progress-section">
-                <!-- Progress bars and word lists will be generated here by JavaScript -->
-            </div>
+            <div id="progress-section"></div>
         </div>
     </div>
 
-    <!-- Link to our JavaScript file for game logic -->
     <script src="script.js"></script>
 
 </body>

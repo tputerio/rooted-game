@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             root: "TRACT",
             extras: "SONIED",
-            // "RETRACTED" has been added to the list
             solutions: [
                 "TRACTS", "RETRACT", "DETRACT", "ATTRACT", "TRACTOR", "RETRACTS", "DETRACTS", "ATTRACTS", "CONTRACT", 
                 "DISTRACT", "TRACTORS", "TRACTION", "ATTRACTION", "CONTRACTS", "DISTRACTS", "TRACTIONS", "DETRACTION", 
@@ -33,6 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageArea = document.getElementById('message-area');
     const progressSection = document.getElementById('progress-section');
     const foundWordsSummarySpan = document.getElementById('found-words-summary');
+    const howToPlayButton = document.getElementById('how-to-play-button');
+    const modal = document.getElementById('how-to-play-modal');
+    const closeModalButton = document.getElementById('close-modal-button');
 
     let currentPuzzle;
     let allowedLetters;
@@ -100,8 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hiddenWordInput.value = '';
         typedTextDisplay.innerHTML = '';
 
-        // --- BUG FIX & REFINED VALIDATION ---
-        if (word.length < 5) return; // Silently ignore small words
+        if (word.length < 5) return; 
         if (!word.includes(currentPuzzle.root.toUpperCase())) {
             displayMessage("Word must contain the root.");
             return;
@@ -122,9 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
         foundWords.push(word);
         
         const wordList = document.getElementById(`found-words-${word.length}`);
-        const listItem = document.createElement('li');
-        listItem.textContent = word;
-        wordList.appendChild(listItem);
+        if(wordList) {
+            const listItem = document.createElement('li');
+            listItem.textContent = word;
+            wordList.appendChild(listItem);
+        }
         
         updateProgressBar(word.length);
         updateFoundWordsSummary();
@@ -162,8 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => messageArea.textContent = '', 2000);
     }
 
-
-
     function handleInputStyling() {
         const currentText = hiddenWordInput.value.toUpperCase();
         typedTextDisplay.innerHTML = ''; 
@@ -185,6 +186,19 @@ document.addEventListener('DOMContentLoaded', () => {
     hiddenWordInput.addEventListener('input', handleInputStyling);
     document.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') handleSubmit();
+    });
+
+    // Modal listeners
+    howToPlayButton.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+    });
+    closeModalButton.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) { 
+            modal.classList.add('hidden');
+        }
     });
 
     // --- START THE GAME ---
