@@ -2,25 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- PUZZLE DATA ---
     const puzzles = [
-        {
-            root: "GRAPH",
-            extras: "SICOLE",
-            solutions: ["GRAPHS", "GRAPHIC", "HOLOGRAPH", "GRAPHICS", "GRAPHICAL", "CHOREOGRAPH"]
-        },
-        {
-            root: "TRACT",
-            extras: "SONIED",
-            solutions: [
-                "TRACTS", "RETRACT", "DETRACT", "ATTRACT", "TRACTOR", "RETRACTS", "DETRACTS", "ATTRACTS", "CONTRACT", 
-                "DISTRACT", "TRACTORS", "TRACTION", "ATTRACTION", "CONTRACTS", "DISTRACTS", "TRACTIONS", "DETRACTION", 
-                "RETRACTION", "RETRACTED", "ATTRACTIONS", "CONTRACTION", "DISTRACTION", "CONTRACTIONS", "DISTRACTIONS"
-            ]
-        },
-        {
-            root: "PORT",
-            extras: "ASIDUE",
-            solutions: ["SPORTE", "DUPORT", "AIRPOT", "PASSPORT", "RAPPORT", "DEPORT", "IMPORT", "EXPORT", "REPORT", "SUPPORT"]
-        }
+        { root: "GRAPH", extras: "SICOLE", solutions: ["GRAPHS", "GRAPHIC", "HOLOGRAPH", "GRAPHICS", "GRAPHICAL", "CHOREOGRAPH"] },
+        { root: "TRACT", extras: "SONIED", solutions: ["TRACTS", "RETRACT", "DETRACT", "ATTRACT", "TRACTOR", "RETRACTS", "DETRACTS", "ATTRACTS", "CONTRACT", "DISTRACT", "TRACTORS", "TRACTION", "ATTRACTION", "CONTRACTS", "DISTRACTS", "TRACTIONS", "DETRACTION", "RETRACTION", "RETRACTED", "ATTRACTIONS", "CONTRACTION", "DISTRACTION", "CONTRACTIONS", "DISTRACTIONS"] },
+        { root: "PORT", extras: "ASIDUE", solutions: ["SPORTE", "DUPORT", "AIRPOT", "PASSPORT", "RAPPORT", "DEPORT", "IMPORT", "EXPORT", "REPORT", "SUPPORT"] }
     ];
 
     // --- GETTING HTML ELEMENTS ---
@@ -35,15 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const howToPlayButton = document.getElementById('how-to-play-button');
     const modal = document.getElementById('how-to-play-modal');
     const closeModalButton = document.getElementById('close-modal-button');
+    const deleteButton = document.getElementById('delete-button');
+    const shuffleButton = document.getElementById('shuffle-button');
+    const submitButton = document.getElementById('submit-button');
 
     let currentPuzzle;
     let allowedLetters;
+    let currentExtraLetters;
     let foundWords = [];
 
     // --- INITIALIZE THE GAME ---
     function initGame() {
         const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
         currentPuzzle = puzzles[dayOfYear % puzzles.length];
+        currentExtraLetters = currentPuzzle.extras.toUpperCase().split('');
         allowedLetters = new Set((currentPuzzle.root + currentPuzzle.extras).toUpperCase().split(''));
         displayPuzzle();
         setupProgressBars();
@@ -55,41 +44,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayPuzzle() {
         rootWordDisplay.innerHTML = '';
         extraLettersDisplay.innerHTML = '';
-        currentPuzzle.root.split('').forEach(letter => createLetterSquare(letter, rootWordDisplay));
-        currentPuzzle.extras.split('').forEach(letter => createLetterSquare(letter, extraLettersDisplay));
+        currentPuzzle.root.toUpperCase().split('').forEach(letter => createLetterSquare(letter, rootWordDisplay));
+        currentExtraLetters.forEach(letter => createLetterSquare(letter, extraLettersDisplay));
     }
 
     function createLetterSquare(letter, container) {
         const square = document.createElement('div');
         square.className = 'letter-square';
-        square.textContent = letter.toUpperCase();
+        square.textContent = letter;
         container.appendChild(square);
     }
     
     function setupProgressBars() {
         progressSection.innerHTML = '';
         const wordLengths = {};
-
         currentPuzzle.solutions.forEach(word => {
             const len = word.length;
             if (!wordLengths[len]) wordLengths[len] = { total: 0 };
             wordLengths[len].total++;
         });
-
         Object.keys(wordLengths).sort((a,b) => a-b).forEach(len => {
             const total = wordLengths[len].total;
             const entry = document.createElement('div');
             entry.className = 'progress-entry';
-            entry.innerHTML = `
-                <div class="progress-bar-container">
-                    <div class="progress-label">${len}-Letter Words</div>
-                    <div class="progress-bar-background">
-                        <div class="progress-bar-inner" id="progress-${len}" data-found="0" data-total="${total}">0/${total}</div>
-                    </div>
-                    <span class="celebration-emoji" id="celebrate-${len}">✨</span>
-                </div>
-                <ul class="found-words-for-length" id="found-words-${len}"></ul>
-            `;
+            entry.innerHTML = `<div class="progress-bar-container"><div class="progress-label">${len}-Letter Words</div><div class="progress-bar-background"><div class="progress-bar-inner" id="progress-${len}" data-found="0" data-total="${total}">0/${total}</div></div><span class="celebration-emoji" id="celebrate-${len}">✨</span></div><ul class="found-words-for-length" id="found-words-${len}"></ul>`;
             progressSection.appendChild(entry);
         });
     }
@@ -97,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- GAME LOGIC ---
     function handleSubmit() {
         const word = hiddenWordInput.value.toUpperCase();
-        
         displayMessage('');
         hiddenWordInput.value = '';
         typedTextDisplay.innerHTML = '';
@@ -121,14 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         foundWords.push(word);
-        
         const wordList = document.getElementById(`found-words-${word.length}`);
         if(wordList) {
             const listItem = document.createElement('li');
             listItem.textContent = word;
             wordList.appendChild(listItem);
         }
-        
         updateProgressBar(word.length);
         updateFoundWordsSummary();
     }
@@ -143,14 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressBar) {
             let found = parseInt(progressBar.dataset.found) + 1;
             const total = parseInt(progressBar.dataset.total);
-            
             progressBar.dataset.found = found;
             progressBar.style.width = `${(found / total) * 100}%`;
             progressBar.textContent = `${found}/${total}`;
-
-            if (found === total) {
-                triggerCelebration(len);
-            }
+            if (found === total) triggerCelebration(len);
         }
     }
 
@@ -168,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleInputStyling() {
         const currentText = hiddenWordInput.value.toUpperCase();
         typedTextDisplay.innerHTML = ''; 
-
         for (const letter of currentText) {
             const span = document.createElement('span');
             span.textContent = letter;
@@ -180,25 +150,46 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateAllLettersUsedAreAllowed(word) {
         return [...word].every(letter => allowedLetters.has(letter));
     }
+    
+    // Fisher-Yates shuffle algorithm for the refresh button
+    function shuffleExtraLetters() {
+        for (let i = currentExtraLetters.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [currentExtraLetters[i], currentExtraLetters[j]] = [currentExtraLetters[j], currentExtraLetters[i]];
+        }
+        displayPuzzle();
+    }
 
     // --- EVENT LISTENERS ---
     textDisplayContainer.addEventListener('click', () => hiddenWordInput.focus());
     hiddenWordInput.addEventListener('input', handleInputStyling);
+
+    // Button click listeners
+    deleteButton.addEventListener('click', () => {
+        hiddenWordInput.value = hiddenWordInput.value.slice(0, -1);
+        handleInputStyling();
+    });
+    shuffleButton.addEventListener('click', shuffleExtraLetters);
+    submitButton.addEventListener('click', handleSubmit);
+
+    // Keyboard animation listeners
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') submitButton.classList.add('pressed');
+        if (event.key === 'Backspace') deleteButton.classList.add('pressed');
+    });
     document.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') handleSubmit();
+        if (event.key === 'Enter') {
+            submitButton.classList.remove('pressed');
+            handleSubmit();
+        }
+        if (event.key === 'Backspace') deleteButton.classList.remove('pressed');
     });
 
     // Modal listeners
-    howToPlayButton.addEventListener('click', () => {
-        modal.classList.remove('hidden');
-    });
-    closeModalButton.addEventListener('click', () => {
-        modal.classList.add('hidden');
-    });
+    howToPlayButton.addEventListener('click', () => modal.classList.remove('hidden'));
+    closeModalButton.addEventListener('click', () => modal.classList.add('hidden'));
     modal.addEventListener('click', (event) => {
-        if (event.target === modal) { 
-            modal.classList.add('hidden');
-        }
+        if (event.target === modal) modal.classList.add('hidden');
     });
 
     // --- START THE GAME ---

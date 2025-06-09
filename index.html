@@ -11,14 +11,14 @@
 </head>
 <body>
 
-    <!-- This is the "How to Play" modal, hidden by default -->
+    <!-- "How to Play" modal -->
     <div id="how-to-play-modal" class="modal-overlay hidden">
         <div class="modal-content">
             <button id="close-modal-button" class="close-button">&times;</button>
             <h2>How to Play Rooted</h2>
             <p>Find as many words as you can that meet the following rules:</p>
             <ul>
-                <li>Words must contain the day's **Root Word**.</li>
+                <li>Words must contain the day's <strong>Root Word</strong>.</li>
                 <li>Words must be 5 letters or longer.</li>
                 <li>Words can only use letters from the Root Word and the Extra Letters provided.</li>
                 <li>Letters can be reused.</li>
@@ -27,48 +27,58 @@
         </div>
     </div>
 
+    <!-- Main game container -->
     <div class="game-container">
-        <!-- New top bar with How to Play button -->
-        <div class="top-bar">
-            <button id="how-to-play-button">How to Play</button>
-        </div>
-        
         <header>
             <div class="title-container">
-                <!-- The SVG icon has been removed -->
                 <h1>Rooted</h1>
             </div>
             <p class="subtitle">Find all of the words using the letters from the root word.</p>
         </header>
 
-        <main id="puzzle-area">
-            <div class="puzzle-section">
-                <h2 class="section-title">Root Word</h2>
-                <div id="root-word-display" class="letter-grid"></div>
+        <!-- New two-column layout -->
+        <div class="main-layout">
+            <div class="left-column">
+                <main id="puzzle-area">
+                    <div class="puzzle-section">
+                        <h2 class="section-title">Root Word</h2>
+                        <div id="root-word-display" class="letter-grid"></div>
+                    </div>
+                    <div class="puzzle-section">
+                        <h2 class="section-title">Extra Letters</h2>
+                        <div id="extra-letters-display" class="letter-grid"></div>
+                    </div>
+                </main>
+                <div id="input-area">
+                    <div id="text-display-container" tabindex="0">
+                        <span id="typed-text-display"></span>
+                        <span id="cursor"></span>
+                    </div>
+                    <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                </div>
+                <div id="message-area"></div>
+                <!-- New controls area -->
+                <div id="controls-area">
+                    <button class="control-button" id="delete-button">Delete</button>
+                    <button class="control-button icon-button" id="shuffle-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.75,1.75a.75.75,0,0,0-1.5,0V4.5a.75.75,0,0,0,1.5,0Zm-2,13.5a.75.75,0,0,0,1.5,0V12.5a.75.75,0,0,0-1.5,0ZM17,6.5a.75.75,0,0,1,.75-.75,4.75,4.75,0,0,1,0,9.5.75.75,0,0,1,0-1.5,3.25,3.25,0,0,0,0-6.5.75.75,0,0,1-.75-.75ZM7,8a.75.75,0,0,1-.75.75,4.75,4.75,0,0,0,0,9.5.75.75,0,0,1,0,1.5,6.25,6.25,0,0,1,0-12.5A.75.75,0,0,1,7,8Z"/></svg>
+                    </button>
+                    <button class="control-button" id="submit-button">Enter</button>
+                </div>
             </div>
-            <div class="puzzle-section">
-                <h2 class="section-title">Extra Letters</h2>
-                <div id="extra-letters-display" class="letter-grid"></div>
+            <div class="right-column">
+                <div id="results-container">
+                    <div class="results-header">
+                        <h2>Progress</h2>
+                        <span id="found-words-summary">0 of 0</span>
+                    </div>
+                    <div id="progress-section"></div>
+                </div>
             </div>
-        </main>
-
-        <div id="input-area">
-            <div id="text-display-container" tabindex="0">
-                <span id="typed-text-display"></span>
-                <span id="cursor"></span>
-            </div>
-            <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         
-        <div id="message-area"></div>
-
-        <div id="results-container">
-            <div class="results-header">
-                <h2>Found Words</h2>
-                <span id="found-words-summary">0 of 0</span>
-            </div>
-            <div id="progress-section"></div>
-        </div>
+        <!-- How to Play button moved for better layout control -->
+        <button id="how-to-play-button">?</button>
     </div>
 
     <script src="script.js"></script>
