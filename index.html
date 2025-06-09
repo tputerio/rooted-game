@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Rooted</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -20,7 +20,7 @@
             <ul>
                 <li>Words must contain the day's <strong>Root Word</strong>.</li>
                 <li>Words must be 5 letters or longer.</li>
-                <li>Words can only use letters from the Root Word and the Extra Letters provided.</li>
+                <li>Words can only use letters from the Root Word and Your Letters.</li>
                 <li>Letters can be reused.</li>
             </ul>
             <p>Good luck!</p>
@@ -29,61 +29,53 @@
 
     <!-- Main game container -->
     <div class="game-container">
-        <header>
-            <div class="title-container">
-                <h1>Rooted</h1>
-            </div>
-            <p class="subtitle">Find all of the words using the letters from the root word.</p>
-        </header>
+        <div class="top-bar">
+            <h1>Rooted</h1>
+            <button id="how-to-play-button">?</button>
+        </div>
 
-        <!-- Two-column layout -->
-        <div class="main-layout">
-            <div class="left-column">
-                <main id="puzzle-area">
-                    <div class="puzzle-section">
-                        <h2 class="section-title">Root Word</h2>
-                        <div id="root-word-display" class="letter-grid"></div>
-                    </div>
-                    <div class="puzzle-section">
-                        <h2 class="section-title">Extra Letters</h2>
-                        <div id="extra-letters-display" class="letter-grid"></div>
-                    </div>
-                </main>
-                <div id="input-area">
-                    <div id="text-display-container" tabindex="0">
-                        <span id="typed-text-display"></span>
-                        <span id="cursor"></span>
-                    </div>
-                    <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-                </div>
-                <div id="message-area"></div>
-                <!-- Controls area -->
-                <div id="controls-area">
-                    <button class="control-button" id="delete-button">Delete</button>
-                    <button class="control-button icon-button" id="shuffle-button" aria-label="Shuffle Letters">
-                        <!-- New, more reliable SVG icon for shuffle -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                          <path d="M10.5 1.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V1.75zM13.5 1.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V1.75zM16.5 2.5a.75.75 0 000 1.5h2.25a.75.75 0 000-1.5H16.5zM5.25 4a.75.75 0 000-1.5H7.5a.75.75 0 000 1.5H5.25zM17.25 8a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V8zM14.25 8a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V8zM11.25 8.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V8.75zM8.25 8.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0V8.75zM19.5 15.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0v-2.75zM3 15.75a.75.75 0 00-1.5 0v2.75a.75.75 0 001.5 0v-2.75zM17.25 16.5a.75.75 0 000 1.5h2.25a.75.75 0 000-1.5H17.25zM4.5 18a.75.75 0 000-1.5H6.75a.75.75 0 000 1.5H4.5z"/>
-                        </svg>
-                    </button>
-                    <button class="control-button" id="submit-button">Enter</button>
-                </div>
+        <!-- NEW: Progress section at the top -->
+        <div id="results-container">
+            <div class="results-header" id="results-toggle">
+                <span id="found-words-summary">0 of 0 words found</span>
+                <span id="toggle-arrow">▼</span>
             </div>
-            <div class="right-column">
-                <div id="results-container">
-                    <div class="results-header">
-                        <h2>Progress</h2>
-                        <span id="found-words-summary">0 of 0</span>
-                    </div>
-                    <div id="progress-section"></div>
-                </div>
+            <div id="collapsible-content" class="hidden">
+                <div id="progress-section"></div>
             </div>
         </div>
+
+        <!-- Main puzzle area -->
+        <main id="puzzle-area">
+            <div id="input-area">
+                <div id="text-display-container" tabindex="0">
+                    <span id="typed-text-display"></span>
+                    <span id="cursor"></span>
+                </div>
+                <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div id="message-area"></div>
+
+            <div class="puzzle-section">
+                <h2 class="section-title">Root Word</h2>
+                <div id="root-word-display" class="letter-grid"></div>
+            </div>
+            <div class="puzzle-section">
+                <h2 class="section-title">Your Letters</h2>
+                <div id="extra-letters-display" class="letter-grid"></div>
+            </div>
+        </main>
         
-        <button id="how-to-play-button">?</button>
+        <!-- Controls area -->
+        <div id="controls-area">
+            <button class="control-button" id="delete-button">Delete</button>
+            <button class="control-button icon-button" id="shuffle-button" aria-label="Shuffle Letters">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.75,1.75a.75.75,0,0,0-1.5,0V4.5a.75.75,0,0,0,1.5,0Zm-2,13.5a.75.75,0,0,0,1.5,0V12.5a.75.75,0,0,0-1.5,0ZM17,6.5a.75.75,0,0,1,.75-.75,4.75,4.75,0,0,1,0,9.5.75.75,0,0,1,0-1.5,3.25,3.25,0,0,0,0-6.5.75.75,0,0,1-.75-.75ZM7,8a.75.75,0,0,1-.75.75,4.75,4.75,0,0,0,0,9.5.75.75,0,0,1,0,1.5,6.25,6.25,0,0,1,0-12.5A.75.75,0,0,1,7,8Z"/></svg>
+            </button>
+            <button class="control-button" id="submit-button">Enter</button>
+        </div>
     </div>
 
     <script src="script.js"></script>
-
 </body>
 </html>
