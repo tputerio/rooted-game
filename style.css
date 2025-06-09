@@ -18,11 +18,32 @@ body {
     text-align: center;
 }
 
+/* NEW HEADER STYLING */
+header {
+    margin-bottom: 30px;
+}
+.title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+.tree-icon {
+    width: 32px;
+    height: 32px;
+    fill: #2ecc71; /* Green color for the icon */
+}
 header h1 {
     font-size: 36px;
     font-weight: 700;
-    margin-bottom: 30px;
+    margin: 0;
 }
+.subtitle {
+    font-size: 16px;
+    color: #777;
+    margin: 5px 0 0 0;
+}
+
 
 /* Styling for sections like Root Word, Extra Letters */
 .puzzle-section {
@@ -30,7 +51,7 @@ header h1 {
 }
 
 .section-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     color: #888;
     text-transform: uppercase;
@@ -57,9 +78,11 @@ header h1 {
     font-size: 28px;
     font-weight: 700;
     text-transform: uppercase;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* Styling for the input area - REMOVED BUTTON */
+/* Styling for the input area */
 #input-area {
     display: flex;
     justify-content: center;
@@ -68,7 +91,6 @@ header h1 {
     height: 60px;
 }
 
-/* New text display styles */
 #text-display-container {
     display: flex;
     align-items: center;
@@ -76,26 +98,15 @@ header h1 {
     min-height: 40px;
     cursor: text;
 }
-
-#text-display-container:focus {
-    outline: none;
-}
-
+#text-display-container:focus { outline: none; }
 #typed-text-display {
     font-size: 32px;
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
 }
-/* Style for individual letters in the input */
-#typed-text-display span.valid-letter {
-    color: #333; /* Black for valid letters */
-}
-#typed-text-display span.invalid-letter {
-    color: #ccc; /* Grey for invalid letters */
-}
-
-
+#typed-text-display span.valid-letter { color: #333; }
+#typed-text-display span.invalid-letter { color: #ccc; }
 #cursor {
     display: inline-block;
     width: 2px;
@@ -104,18 +115,13 @@ header h1 {
     margin-left: 2px;
     animation: blink 1s step-end infinite;
 }
-
-/* Blinking animation for the cursor */
 @keyframes blink {
     from, to { background-color: transparent }
     50% { background-color: #333; }
 }
-
-/* This hides the real input field but keeps it functional */
 #hidden-word-input {
     position: absolute;
     left: -9999px;
-    top: -9999px;
     opacity: 0;
 }
 
@@ -126,6 +132,32 @@ header h1 {
     color: #e74c3c;
     font-weight: 700;
 }
+
+/* NEW RESULTS CONTAINER STYLING */
+#results-container {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    background-color: white;
+}
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.results-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+#found-words-summary {
+    font-size: 14px;
+    color: #777;
+    font-weight: 700;
+}
+
 
 /* Progress Section Styling */
 .progress-entry {
@@ -142,13 +174,12 @@ header h1 {
 .progress-label {
     font-size: 14px;
     text-align: left;
-    margin-bottom: 4px;
-    flex-shrink: 0; /* Prevents the label from shrinking */
-    width: 120px; /* Give it a fixed width */
+    flex-shrink: 0;
+    width: 120px;
 }
 
 .progress-bar-background {
-    flex-grow: 1; /* Allows the bar to take remaining space */
+    flex-grow: 1;
     height: 24px;
     background-color: #eee;
     border-radius: 12px;
@@ -183,20 +214,21 @@ header h1 {
     100% { transform: scale(0) rotate(360deg); opacity: 0; }
 }
 
-/* Found words list styling - NEW */
+/* Found words list styling - REFINED */
 .found-words-for-length {
     list-style: none;
-    padding: 0 0 0 20px;
+    padding: 5px 0 0 0;
     margin: 0;
     display: flex;
-    flex-wrap: wrap; /* Allows words to wrap to the next line */
-    gap: 15px; /* Space between words */
-    justify-content: flex-start; /* Align words to the left */
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
     text-align: left;
 }
 .found-words-for-length li {
-    background-color: #e9e9e9;
-    padding: 4px 10px;
-    border-radius: 15px;
+    background-color: #f0f0f0;
+    padding: 4px 12px;
+    border-radius: 16px; /* Pill shape */
     font-size: 14px;
+    font-weight: 500;
 }

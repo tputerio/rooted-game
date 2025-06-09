@@ -10,10 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             root: "TRACT",
             extras: "SONIED",
+            // "RETRACTED" has been added to the list
             solutions: [
                 "TRACTS", "RETRACT", "DETRACT", "ATTRACT", "TRACTOR", "RETRACTS", "DETRACTS", "ATTRACTS", "CONTRACT", 
                 "DISTRACT", "TRACTORS", "TRACTION", "ATTRACTION", "CONTRACTS", "DISTRACTS", "TRACTIONS", "DETRACTION", 
-                "RETRACTION", "ATTRACTIONS", "CONTRACTION", "DISTRACTION", "CONTRACTIONS", "DISTRACTIONS"
+                "RETRACTION", "RETRACTED", "ATTRACTIONS", "CONTRACTION", "DISTRACTION", "CONTRACTIONS", "DISTRACTIONS"
             ]
         },
         {
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const typedTextDisplay = document.getElementById('typed-text-display');
     const messageArea = document.getElementById('message-area');
     const progressSection = document.getElementById('progress-section');
+    const foundWordsSummarySpan = document.getElementById('found-words-summary');
 
     let currentPuzzle;
     let allowedLetters;
@@ -43,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         allowedLetters = new Set((currentPuzzle.root + currentPuzzle.extras).toUpperCase().split(''));
         displayPuzzle();
         setupProgressBars();
+        updateFoundWordsSummary();
         hiddenWordInput.focus();
     }
 
@@ -50,20 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function displayPuzzle() {
         rootWordDisplay.innerHTML = '';
         extraLettersDisplay.innerHTML = '';
+        currentPuzzle.root.split('').forEach(letter => createLetterSquare(letter, rootWordDisplay));
+        currentPuzzle.extras.split('').forEach(letter => createLetterSquare(letter, extraLettersDisplay));
+    }
 
-        currentPuzzle.root.split('').forEach(letter => {
-            const square = document.createElement('div');
-            square.className = 'letter-square';
-            square.textContent = letter.toUpperCase();
-            rootWordDisplay.appendChild(square);
-        });
-
-        currentPuzzle.extras.split('').forEach(letter => {
-            const square = document.createElement('div');
-            square.className = 'letter-square';
-            square.textContent = letter.toUpperCase();
-            extraLettersDisplay.appendChild(square);
-        });
+    function createLetterSquare(letter, container) {
+        const square = document.createElement('div');
+        square.className = 'letter-square';
+        square.textContent = letter.toUpperCase();
+        container.appendChild(square);
     }
     
     function setupProgressBars() {
@@ -72,9 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentPuzzle.solutions.forEach(word => {
             const len = word.length;
-            if (!wordLengths[len]) {
-                wordLengths[len] = { total: 0 };
-            }
+            if (!wordLengths[len]) wordLengths[len] = { total: 0 };
             wordLengths[len].total++;
         });
 
@@ -102,15 +98,17 @@ document.addEventListener('DOMContentLoaded', () => {
         
         displayMessage('');
         hiddenWordInput.value = '';
-        typedTextDisplay.innerHTML = ''; // Clear visual display
+        typedTextDisplay.innerHTML = '';
 
+        // --- BUG FIX & REFINED VALIDATION ---
+        if (word.length < 5) return; // Silently ignore small words
+        if (!word.includes(currentPuzzle.root.toUpperCase())) {
+            displayMessage("Word must contain the root.");
+            return;
+        }
         if (!validateAllLettersUsedAreAllowed(word)) {
              displayMessage("Word contains invalid letters.");
              return;
-        }
-        if (word.length < 5) {
-            displayMessage("Word must be at least 5 letters long.");
-            return;
         }
         if (foundWords.includes(word)) {
             displayMessage("Already found!");
@@ -123,16 +121,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         foundWords.push(word);
         
-        // Add word to the specific list for its length
         const wordList = document.getElementById(`found-words-${word.length}`);
         const listItem = document.createElement('li');
         listItem.textContent = word;
         wordList.appendChild(listItem);
         
         updateProgressBar(word.length);
+        updateFoundWordsSummary();
     }
     
     // --- HELPER & UPDATE FUNCTIONS ---
+    function updateFoundWordsSummary() {
+        foundWordsSummarySpan.textContent = `${foundWords.length} of ${currentPuzzle.solutions.length}`;
+    }
+
     function updateProgressBar(len) {
         const progressBar = document.getElementById(`progress-${len}`);
         if (progressBar) {
@@ -143,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             progressBar.style.width = `${(found / total) * 100}%`;
             progressBar.textContent = `${found}/${total}`;
 
-            // Check for celebration
             if (found === total) {
                 triggerCelebration(len);
             }
@@ -153,57 +154,37 @@ document.addEventListener('DOMContentLoaded', () => {
     function triggerCelebration(len) {
         const emoji = document.getElementById(`celebrate-${len}`);
         emoji.classList.add('celebrate');
-        // Remove class after animation so it can be re-triggered
-        setTimeout(() => {
-            emoji.classList.remove('celebrate');
-        }, 700);
+        setTimeout(() => emoji.classList.remove('celebrate'), 700);
     }
 
     function displayMessage(msg) {
         messageArea.textContent = msg;
-        // Message disappears after 2 seconds
-        setTimeout(() => {
-            messageArea.textContent = '';
-        }, 2000);
+        setTimeout(() => messageArea.textContent = '', 2000);
     }
+
+
 
     function handleInputStyling() {
         const currentText = hiddenWordInput.value.toUpperCase();
-        typedTextDisplay.innerHTML = ''; // Clear previous letters
+        typedTextDisplay.innerHTML = ''; 
 
         for (const letter of currentText) {
             const span = document.createElement('span');
             span.textContent = letter;
-            // Check if the letter is allowed
-            if (allowedLetters.has(letter)) {
-                span.className = 'valid-letter';
-            } else {
-                span.className = 'invalid-letter';
-            }
+            span.className = allowedLetters.has(letter) ? 'valid-letter' : 'invalid-letter';
             typedTextDisplay.appendChild(span);
         }
     }
 
     function validateAllLettersUsedAreAllowed(word) {
-        for(const letter of word) {
-            if(!allowedLetters.has(letter)) {
-                return false;
-            }
-        }
-        return true;
+        return [...word].every(letter => allowedLetters.has(letter));
     }
 
     // --- EVENT LISTENERS ---
-    textDisplayContainer.addEventListener('click', () => {
-        hiddenWordInput.focus();
-    });
-
+    textDisplayContainer.addEventListener('click', () => hiddenWordInput.focus());
     hiddenWordInput.addEventListener('input', handleInputStyling);
-    
     document.addEventListener('keyup', (event) => {
-        if (event.key === 'Enter') {
-            handleSubmit();
-        }
+        if (event.key === 'Enter') handleSubmit();
     });
 
     // --- START THE GAME ---
