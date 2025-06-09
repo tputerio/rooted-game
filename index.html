@@ -35,9 +35,15 @@
             </div>
         </main>
 
-        <!-- The area for user input -->
+        <!-- The area for user input - NEW DESIGN -->
         <div id="input-area">
-            <input type="text" id="word-input" placeholder="Type a word..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <!-- This is the new visual display for the text -->
+            <div id="text-display-container" tabindex="0">
+                <span id="typed-text-display"></span>
+                <span id="cursor"></span>
+            </div>
+            <!-- This is a hidden input field that will actually capture the text -->
+            <input type="text" id="hidden-word-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
             <button id="submit-button">Enter</button>
         </div>
         

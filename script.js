@@ -2,13 +2,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- PUZZLE DATA ---
-    // In a real app, this might be loaded from a server.
-    // For our free version, we define the puzzles right here.
     const puzzles = [
         {
             root: "GRAPH",
             extras: "SICOLE",
-            // The complete list of valid answers for this puzzle
+            // The complete list of valid answers for this puzzle - must be uppercase
             solutions: ["GRAPHS", "GRAPHIC", "HOLOGRAPH", "GRAPHICS", "GRAPHICAL", "CHOREOGRAPH"]
         },
         {
@@ -29,10 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // --- GETTING HTML ELEMENTS ---
-    // We need to get references to all the parts of our page we want to interact with.
     const rootWordDisplay = document.getElementById('root-word-display');
     const extraLettersDisplay = document.getElementById('extra-letters-display');
-    const wordInput = document.getElementById('word-input');
+    const hiddenWordInput = document.getElementById('hidden-word-input'); // The real (hidden) input
+    const textDisplayContainer = document.getElementById('text-display-container'); // The fake input container
+    const typedTextDisplay = document.getElementById('typed-text-display'); // The span that shows the typed text
     const submitButton = document.getElementById('submit-button');
     const messageArea = document.getElementById('message-area');
     const progressSection = document.getElementById('progress-section');
@@ -45,25 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALIZE THE GAME ---
     function initGame() {
-        // Pick a puzzle based on the current day
         const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
         currentPuzzle = puzzles[dayOfYear % puzzles.length];
-
-        // Combine root and extra letters to get all allowed letters
         allowedLetters = new Set((currentPuzzle.root + currentPuzzle.extras).split(''));
-
-        // Display the puzzle on the screen
         displayPuzzle();
         setupProgressBars();
+        // Focus the hidden input by default
+        hiddenWordInput.focus();
     }
 
     // --- DISPLAY FUNCTIONS ---
     function displayPuzzle() {
-        // Clear any previous puzzle
         rootWordDisplay.innerHTML = '';
         extraLettersDisplay.innerHTML = '';
 
-        // Create and display the squares for the root word
         currentPuzzle.root.split('').forEach(letter => {
             const square = document.createElement('div');
             square.className = 'letter-square';
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
             rootWordDisplay.appendChild(square);
         });
 
-        // Create and display the squares for the extra letters
         currentPuzzle.extras.split('').forEach(letter => {
             const square = document.createElement('div');
             square.className = 'letter-square';
@@ -82,9 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function setupProgressBars() {
         progressSection.innerHTML = '';
-        const wordLengths = {}; // Object to store counts for each word length
+        const wordLengths = {};
 
-        // Group solutions by their length
         currentPuzzle.solutions.forEach(word => {
             const len = word.length;
             if (!wordLengths[len]) {
@@ -93,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
             wordLengths[len].total++;
         });
 
-        // Create a progress bar for each length
         Object.keys(wordLengths).sort((a,b) => a-b).forEach(len => {
             const total = wordLengths[len].total;
             const container = document.createElement('div');
@@ -110,11 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GAME LOGIC ---
     function handleSubmit() {
-        const word = wordInput.value.toUpperCase();
+        // Get the value from the hidden input field
+        const word = hiddenWordInput.value.toUpperCase();
         
-        // Clear the message area and input field
         displayMessage('');
-        wordInput.value = '';
+        // Clear both the hidden input and the visual display
+        hiddenWordInput.value = '';
+        typedTextDisplay.textContent = '';
+
 
         // --- Validation Checks ---
         if (word.length < 5) {
@@ -125,7 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
             displayMessage("Already found!");
             return;
         }
-        if (!currentPuzzle.solutions.includes(word.toLowerCase())) {
+        
+        // **BUG FIX**: Check the uppercase word against the solutions array.
+        // The .includes() method is case-sensitive, so we ensure both are uppercase.
+        if (!currentPuzzle.solutions.includes(word)) {
             displayMessage("Not in the word list.");
             return;
         }
@@ -133,28 +130,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // If all checks pass, it's a valid word!
         foundWords.push(word);
         
-        // Add word to the found list UI
         const listItem = document.createElement('li');
         listItem.textContent = word;
         foundWordsList.appendChild(listItem);
         
-        // Sort the list alphabetically
         const sortedItems = Array.from(foundWordsList.getElementsByTagName('li')).sort((a, b) => a.textContent.localeCompare(b.textContent));
         sortedItems.forEach(item => foundWordsList.appendChild(item));
         
-        // Update counts and progress bar
         foundWordsCountSpan.textContent = foundWords.length;
         updateProgressBar(word.length);
     }
     
     function updateProgressBar(len) {
         const progressBar = document.getElementById(`progress-${len}`);
-        let found = parseInt(progressBar.dataset.found) + 1;
-        const total = parseInt(progressBar.dataset.total);
-        
-        progressBar.dataset.found = found;
-        progressBar.style.width = `${(found / total) * 100}%`;
-        progressBar.textContent = `${found}/${total}`;
+        if (progressBar) { // Make sure the progress bar exists
+            let found = parseInt(progressBar.dataset.found) + 1;
+            const total = parseInt(progressBar.dataset.total);
+            
+            progressBar.dataset.found = found;
+            progressBar.style.width = `${(found / total) * 100}%`;
+            progressBar.textContent = `${found}/${total}`;
+        }
     }
 
     function displayMessage(msg) {
@@ -162,11 +158,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- EVENT LISTENERS ---
-    // Listen for click on the submit button
     submitButton.addEventListener('click', handleSubmit);
 
-    // Listen for the "Enter" key being pressed in the input field
-    wordInput.addEventListener('keyup', (event) => {
+    // Make it so clicking the display area focuses the hidden input
+    textDisplayContainer.addEventListener('click', () => {
+        hiddenWordInput.focus();
+    });
+
+    // Sync the hidden input's value with the visual display
+    hiddenWordInput.addEventListener('input', () => {
+        typedTextDisplay.textContent = hiddenWordInput.value.toUpperCase();
+    });
+    
+    // Listen for the "Enter" key on the whole page, which is better for accessibility
+    document.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
             handleSubmit();
         }

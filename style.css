@@ -63,24 +63,54 @@ header h1 {
 #input-area {
     display: flex;
     justify-content: center;
+    align-items: center;
     margin-bottom: 15px;
+    height: 60px; /* Give it a fixed height */
 }
 
-#word-input {
-    width: 60%;
-    max-width: 300px;
-    padding: 12px;
-    font-size: 18px;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    text-align: center;
+/* New text display styles */
+#text-display-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    cursor: text;
+}
+
+#text-display-container:focus {
+    outline: none;
+}
+
+#typed-text-display {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    outline: none; /* Remove default outline */
 }
 
-#word-input:focus {
-    border-color: #3498db; /* Highlight when selected */
+#cursor {
+    display: inline-block;
+    width: 2px;
+    height: 32px;
+    background-color: #333;
+    margin-left: 2px;
+    animation: blink 1s step-end infinite;
 }
+
+/* Blinking animation for the cursor */
+@keyframes blink {
+    from, to { background-color: transparent }
+    50% { background-color: #333; }
+}
+
+/* This hides the real input field but keeps it functional */
+#hidden-word-input {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    opacity: 0;
+}
+
 
 #submit-button {
     padding: 12px 20px;
